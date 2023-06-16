@@ -1,0 +1,27 @@
+---
+name: Test
+
+on: [push, fork]
+
+jobs:
+  molecule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies.
+        run: pip3 install yamllint ansible-lint ansible "molecule[lint,podman]"
+
+      - name: Install Galaxy dependencies.
+        run: ansible-galaxy collection install containers.podman
+
+      - name: Run molecule
+        run: "molecule lint"
+        env:
+          ANSIBLE_FORCE_COLOR: '1'

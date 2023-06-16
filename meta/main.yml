@@ -1,0 +1,23 @@
+---
+galaxy_info:
+  author: morbidick
+  role_name: act_runner
+  description: install and configure the gitea act runner
+  license: MIT
+  min_ansible_version: "2.2"
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - automation
+    - gitea
+    - act
+    - runner
+
+dependencies: []

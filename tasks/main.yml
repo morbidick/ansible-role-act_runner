@@ -1,0 +1,63 @@
+---
+- name: Install dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+    update_cache: true
+    state: present
+  with_items:
+    - docker.io
+
+- name: Add user
+  ansible.builtin.user:
+    name: "{{ act_runner_user }}"
+    groups: docker
+    append: true
+
+- name: Create application directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ act_runner_user }}"
+    group: "{{ act_runner_user }}"
+    mode: 0755
+  with_items:
+    - "{{ act_runner_dir }}"
+
+- name: Download latest release
+  ansible.builtin.get_url:
+    url: "{{ act_runner_download_url }}"
+    checksum: "{{ act_runner_download_checksum | default(omit) }}"
+    dest: "{{ act_runner_dir }}/act_runner-{{ act_runner_version }}"
+    owner: "{{ act_runner_user }}"
+    mode: 0755
+
+- name: Create current symlink
+  ansible.builtin.file:
+    src: "{{ act_runner_dir }}/act_runner-{{ act_runner_version }}"
+    dest: "{{ act_runner_dir }}/act_runner-current"
+    state: "link"
+  notify:
+    - Service restart
+
+- name: Register runner
+  ansible.builtin.command:
+    chdir: "{{ act_runner_dir }}"
+    cmd: "{{ act_runner_dir }}/act_runner-current register --instance {{ act_runner_instance }} --token {{ act_runner_token }} --no-interactive"
+    creates: "{{ act_runner_dir }}/.runner"
+  become: true
+  become_user: "{{ act_runner_user }}"
+  when: act_runner_instance is defined and act_runner_token is defined
+
+- name: Deploy systemd service file
+  ansible.builtin.template:
+    src: "systemd.service.j2"
+    dest: "/etc/systemd/system/{{ act_runner_identifier }}.service"
+    mode: 0644
+  notify:
+    - Service restart
+
+- name: Service start
+  ansible.builtin.systemd:
+    name: "{{ act_runner_identifier }}"
+    state: "started"
+    enabled: true

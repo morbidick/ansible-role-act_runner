@@ -1,0 +1,12 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ensure act runner service is runnning
+      ansible.builtin.systemd:
+        name: "act_runner"
+      register: this
+      failed_when: "this.status.ActiveState is not active"

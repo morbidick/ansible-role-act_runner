@@ -1,0 +1,6 @@
+---
+- name: Service restart
+  ansible.builtin.systemd:
+    name: "{{ act_runner_identifier }}"
+    daemon_reload: true
+    state: restarted
