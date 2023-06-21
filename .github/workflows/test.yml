@@ -22,6 +22,6 @@ jobs:
         run: ansible-galaxy collection install containers.podman
 
       - name: Run molecule
-        run: "molecule lint"
+        run: "molecule test"
         env:
           ANSIBLE_FORCE_COLOR: '1'
