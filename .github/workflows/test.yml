@@ -10,18 +10,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Python
+      - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      - name: Install dependencies.
-        run: pip3 install yamllint ansible-lint ansible "molecule[lint,podman]"
+      - name: Install test dependencies.
+        run: pip3 install ansible molecule molecule-plugins[docker] docker
 
-      - name: Install Galaxy dependencies.
-        run: ansible-galaxy collection install containers.podman
-
-      - name: Run molecule
-        run: "molecule test"
+      - name: Run Molecule tests.
+        run: molecule test
         env:
           ANSIBLE_FORCE_COLOR: '1'

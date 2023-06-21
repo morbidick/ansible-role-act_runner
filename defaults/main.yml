@@ -1,6 +1,6 @@
 ---
 act_runner_user: act_runner
-act_runner_dir: /home/{{act_runner_user}}/act_runner
+act_runner_dir: /home/{{ act_runner_user }}/act_runner
 act_runner_version: "0.2.0"
 act_runner_download_checksum: sha256:904033a4ce7f90f1aaf9e8c35877db08f3e791287896de2bad55f4f7eefd1e8b
 act_runner_download_url: "https://dl.gitea.com/act_runner/{{ act_runner_version }}/act_runner-{{ act_runner_version }}-linux-amd64"
